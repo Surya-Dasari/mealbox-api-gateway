@@ -26,6 +26,11 @@ spring:
           predicates:
             - Path=/auth/**
 
+        - id: restaurant-service
+          uri: http://localhost:9102
+          predicates:
+            - Path=/restaurants/**
+
 management:
   endpoints:
     web:
