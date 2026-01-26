@@ -46,6 +46,11 @@ spring:
           predicates:
             - Path=/order/**
 
+        - id: payment-service
+          uri: http://localhost:9106
+          predicates:
+            - Path=/payment/**
+
 management:
   endpoints:
     web:
