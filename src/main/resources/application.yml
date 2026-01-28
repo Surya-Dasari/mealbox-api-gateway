@@ -20,44 +20,63 @@ spring:
               - OPTIONS
             allowedHeaders:
               - "*"
+
       routes:
         - id: auth-service
-          uri: http://localhost:9101
+          uri: http://auth-service:9101
           predicates:
             - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>.*), /${segment}
 
         - id: restaurant-service
-          uri: http://localhost:9102
+          uri: http://restaurant-service:9102
           predicates:
             - Path=/restaurants/**
+          filters:
+            - RewritePath=/restaurants/(?<segment>.*), /${segment}
 
         - id: inventory-service
-          uri: http://localhost:9105
+          uri: http://inventory-service:9105
           predicates:
             - Path=/inventory/**
+          filters:
+            - RewritePath=/inventory/(?<segment>.*), /${segment}
 
         - id: cart-service
-          uri: http://localhost:9103
+          uri: http://cart-service:9103
           predicates:
             - Path=/cart/**
+          filters:
+            - RewritePath=/cart/(?<segment>.*), /${segment}
 
         - id: order-service
-          uri: http://localhost:9104
+          uri: http://order-service:9104
           predicates:
             - Path=/order/**
+          filters:
+            - RewritePath=/order/(?<segment>.*), /${segment}
 
         - id: payment-service
-          uri: http://localhost:9106
+          uri: http://payment-service:9106
           predicates:
             - Path=/payment/**
+          filters:
+            - RewritePath=/payment/(?<segment>.*), /${segment}
 
         - id: notification-service
-          uri: http://localhost:9107
+          uri: http://notification-service:9107
           predicates:
             - Path=/notification/**
+          filters:
+            - RewritePath=/notification/(?<segment>.*), /${segment}
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
+  endpoint:
+    health:
+      enabled: true
+
