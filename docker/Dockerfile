@@ -20,4 +20,3 @@ EXPOSE 9100
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport"
 
 ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar app.jar"]
-
