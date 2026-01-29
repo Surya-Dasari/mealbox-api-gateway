@@ -10,23 +10,12 @@ ARG NEXUS_PASS
 WORKDIR /app
 RUN mkdir -p /app && chmod -R g+rwX /app
 
-# Resolve SNAPSHOT JAR explicitly (jar-only, robust)
-RUN set -e; \
-  SNAPSHOT_VERSION=$(curl -s -u ${NEXUS_USER}:${NEXUS_PASS} \
-    ${NEXUS_URL}/repository/${NEXUS_REPO}/com/mealbox/api-gateway/0.0.1-SNAPSHOT/maven-metadata.xml \
-    | awk '
-      /<snapshotVersion>/ { in_sv=1 }
-      in_sv && /<extension>jar<\/extension>/ { jar=1 }
-      jar && /<value>/ {
-        gsub(/.*<value>|<\/value>.*/, "", $0);
-        print;
-        exit
-      }
-      /<\/snapshotVersion>/ { in_sv=0; jar=0 }
-    '); \
-  echo "Resolved SNAPSHOT version: ${SNAPSHOT_VERSION}"; \
-  curl -fL -u ${NEXUS_USER}:${NEXUS_PASS} \
-    ${NEXUS_URL}/repository/${NEXUS_REPO}/com/mealbox/api-gateway/0.0.1-SNAPSHOT/api-gateway-${SNAPSHOT_VERSION}.jar \
+RUN set -eux; \
+  META_URL="${NEXUS_URL}/repository/${NEXUS_REPO}/com/mealbox/api-gateway/0.0.1-SNAPSHOT/maven-metadata.xml"; \
+  SNAPSHOT=$(curl -fsSL -u ${NEXUS_USER}:${NEXUS_PASS} ${META_URL} \
+    | grep '<value>' | tail -n 1 | sed -E 's/.*>(.*)<.*/\1/'); \
+  curl -fsSL -u ${NEXUS_USER}:${NEXUS_PASS} \
+    "${NEXUS_URL}/repository/${NEXUS_REPO}/com/mealbox/api-gateway/0.0.1-SNAPSHOT/api-gateway-${SNAPSHOT}.jar" \
     -o app.jar
 
 EXPOSE 9100
